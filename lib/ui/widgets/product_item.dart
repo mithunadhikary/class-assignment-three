@@ -31,6 +31,7 @@ class ProductItem extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
+              // TODO: implement delete product api
               _deleteProduct(context, product.id);
             },
             icon: const Icon(Icons.delete),

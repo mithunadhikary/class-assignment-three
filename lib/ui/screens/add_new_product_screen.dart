@@ -157,8 +157,6 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
       headers: {'Content-type': 'application/json'},
       body: jsonEncode(requestBody),
     );
-    print(response.statusCode);
-    print(response.body);
     _addNewProductInProgress = false;
     setState(() {});
     if (response.statusCode == 200) {
@@ -166,6 +164,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('New product added!'),
+          backgroundColor: Colors.green,
         ),
       );
       Navigator.pushAndRemoveUntil(
@@ -177,6 +176,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('New product add failed! Try again.'),
+          backgroundColor: Colors.red,
         ),
       );
     }

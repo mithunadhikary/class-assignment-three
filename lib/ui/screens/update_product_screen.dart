@@ -165,14 +165,14 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
       headers: {'Content-type': 'application/json'},
       body: jsonEncode(requestBody),
     );
-    print(response.statusCode);
-    print(response.body);
+
     _updateProductInProgress = false;
     setState(() {});
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Product has been updated!'),
+          backgroundColor: Colors.green,
         ),
       );
       Navigator.pushAndRemoveUntil(
@@ -184,6 +184,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Product update failed! Try again.'),
+          backgroundColor: Colors.red,
         ),
       );
     }
