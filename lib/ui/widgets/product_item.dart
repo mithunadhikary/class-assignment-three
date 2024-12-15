@@ -3,12 +3,12 @@ import 'package:class_assignment_three/models/product.dart';
 import 'package:class_assignment_three/ui/screens/update_product_screen.dart';
 import 'package:http/http.dart';
 
+import '../screens/product_list_screen.dart';
+
 class ProductItem extends StatelessWidget {
   const ProductItem({super.key, required this.product});
 
   final Product product;
-
-  BuildContext? get context => null;
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +29,12 @@ class ProductItem extends StatelessWidget {
       ),
       trailing: Wrap(
         children: [
-          IconButton(onPressed: () {
-            // TODO: implement delete product api
-            _deleteProduct(product.id);
-          }, icon: const Icon(Icons.delete)),
+          IconButton(
+            onPressed: () {
+              _deleteProduct(context, product.id);
+            },
+            icon: const Icon(Icons.delete),
+          ),
           IconButton(
             onPressed: () {
               Navigator.pushNamed(
@@ -48,9 +50,8 @@ class ProductItem extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteProduct(id) async {
-    Uri uri = Uri.parse(
-        'https://crud.teamrabbil.com/api/v1/DeleteProduct/${id}');
+  Future<void> _deleteProduct(BuildContext context, id) async {
+    Uri uri = Uri.parse('https://crud.teamrabbil.com/api/v1/DeleteProduct/$id');
 
     Response response = await get(
       uri,
@@ -58,9 +59,24 @@ class ProductItem extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      print("Delete");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Product deleted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context)=>ProductListScreen(),),
+            (Route route) => false,
+      );
     } else {
-      print("Not delete");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to delete product.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }
