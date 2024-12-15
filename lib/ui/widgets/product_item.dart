@@ -52,32 +52,71 @@ class ProductItem extends StatelessWidget {
   }
 
   Future<void> _deleteProduct(BuildContext context, id) async {
-    Uri uri = Uri.parse('https://crud.teamrabbil.com/api/v1/DeleteProduct/$id');
-
-    Response response = await get(
-      uri,
-      headers: {'Content-type': 'application/json'},
+    bool? confirmDelete = await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: const Text('Are you sure you want to delete this product?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false); // User canceled
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true); // User confirmed
+              },
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
     );
 
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Product deleted successfully!'),
-          backgroundColor: Colors.green,
-        ),
+    if (confirmDelete == true) {
+      // Proceed with delete API call if user confirmed
+      Uri uri = Uri.parse('https://crud.teamrabbil.com/api/v1/DeleteProduct/$id');
+
+      Response response = await get(
+        uri,
+        headers: {'Content-type': 'application/json'},
       );
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context)=>ProductListScreen(),),
-            (Route route) => false,
-      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Product deleted successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context)=>ProductListScreen(),),
+              (Route route) => false,
+        );
+
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to delete product.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Failed to delete product.'),
-          backgroundColor: Colors.red,
+          content: Text('Delete action canceled.'),
         ),
       );
     }
   }
+
 }
